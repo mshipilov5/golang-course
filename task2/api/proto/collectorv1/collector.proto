@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package collector.v1;
+
+option go_package = "golang-course/task2/api/proto/collectorv1;collectorv1";
+
+service CollectorService {
+  rpc GetRepositoryInfo(GetRepositoryInfoRequest) returns (GetRepositoryInfoResponse);
+}
+
+message GetRepositoryInfoRequest {
+  string owner = 1;
+  string repo = 2;
+}
+
+message GetRepositoryInfoResponse {
+  string name = 1;
+  string description = 2;
+  int32 stars = 3;
+  int32 forks = 4;
+  string created_at = 5;
+}
