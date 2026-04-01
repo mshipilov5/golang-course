@@ -6,13 +6,13 @@ import (
 )
 
 type RepositoryReader interface {
-	GetRepository(ctx context.Context, owner, repo string) (*domain.RepositoryInfo, error)
+	GetRepository(ctx context.Context, owner, repo string) (domain.RepositoryInfo, error)
 }
 
 type GetRepository struct {
 	Reader RepositoryReader
 }
 
-func (g *GetRepository) Run(ctx context.Context, owner, repo string) (*domain.RepositoryInfo, error) {
+func (g *GetRepository) Run(ctx context.Context, owner, repo string) (domain.RepositoryInfo, error) {
 	return g.Reader.GetRepository(ctx, owner, repo)
 }

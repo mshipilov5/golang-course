@@ -18,19 +18,19 @@ func NewCollectorClient(conn *grpc.ClientConn) *CollectorClient {
 	return &CollectorClient{client: pb.NewCollectorServiceClient(conn)}
 }
 
-func (c *CollectorClient) GetRepository(ctx context.Context, owner, repo string) (*domain.RepositoryInfo, error) {
+func (c *CollectorClient) GetRepository(ctx context.Context, owner, repo string) (domain.RepositoryInfo, error) {
 	resp, err := c.client.GetRepositoryInfo(ctx, &pb.GetRepositoryInfoRequest{
 		Owner: owner,
 		Repo:  repo,
 	})
 	if err != nil {
-		return nil, err
+		return domain.RepositoryInfo{}, err
 	}
 	created, err := time.Parse(time.RFC3339, resp.GetCreatedAt())
 	if err != nil {
-		return nil, err
+		return domain.RepositoryInfo{}, err
 	}
-	return &domain.RepositoryInfo{
+	return domain.RepositoryInfo{
 		Name:        resp.GetName(),
 		Description: resp.GetDescription(),
 		Stars:       int(resp.GetStars()),

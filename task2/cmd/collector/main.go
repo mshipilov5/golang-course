@@ -9,7 +9,7 @@ import (
 
 	pb "golang-course/task2/api/proto/collectorv1"
 	gh "golang-course/task2/internal/collector/adapter/github"
-	grpcadapter "golang-course/task2/internal/collector/adapter/grpc"
+	grpchandler "golang-course/task2/internal/collector/handler/grpc"
 	"golang-course/task2/internal/collector/usecase"
 )
 
@@ -24,7 +24,7 @@ func main() {
 		Fetcher: &gh.Client{},
 	}
 	srv := grpc.NewServer()
-	pb.RegisterCollectorServiceServer(srv, &grpcadapter.Server{UC: uc})
+	pb.RegisterCollectorServiceServer(srv, &grpchandler.Server{UC: uc})
 
 	log.Printf("collector listening on %s", addr)
 	if err := srv.Serve(lis); err != nil {

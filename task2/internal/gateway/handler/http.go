@@ -2,11 +2,13 @@ package handler
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 
+	"golang-course/task2/internal/gateway/domain"
 	"golang-course/task2/internal/gateway/usecase"
 )
 
@@ -14,12 +16,22 @@ type HTTP struct {
 	UC *usecase.GetRepository
 }
 
-type swaggerRepo struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Stars       int    `json:"stargazers_count"`
-	Forks       int    `json:"forks_count"`
-	CreatedAt   string `json:"created_at"`
+type RepoJSON struct {
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	Stars       int       `json:"stargazers_count"`
+	Forks       int       `json:"forks_count"`
+	CreatedAt   time.Time `json:"created_at"`
+}
+
+func toRepoJSON(d domain.RepositoryInfo) RepoJSON {
+	return RepoJSON{
+		Name:        d.Name,
+		Description: d.Description,
+		Stars:       d.Stars,
+		Forks:       d.Forks,
+		CreatedAt:   d.CreatedAt,
+	}
 }
 
 func (h *HTTP) Register(r *gin.Engine) {
@@ -32,7 +44,7 @@ func (h *HTTP) Register(r *gin.Engine) {
 // @Tags         repos
 // @Param        owner  path  string  true  "GitHub owner (user or org)"
 // @Param        repo   path  string  true  "Repository name"
-// @Success      200  {object}  swaggerRepo
+// @Success      200  {object}  RepoJSON
 // @Failure      400  {object}  map[string]string
 // @Failure      404  {object}  map[string]string
 // @Failure      500  {object}  map[string]string
@@ -45,7 +57,7 @@ func (h *HTTP) getRepo(c *gin.Context) {
 		writeGRPCError(c, err)
 		return
 	}
-	c.JSON(http.StatusOK, info)
+	c.JSON(http.StatusOK, toRepoJSON(info))
 }
 
 func writeGRPCError(c *gin.Context, err error) {
